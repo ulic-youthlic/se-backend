@@ -1,4 +1,1 @@
-from .main import ADMINS, USERS
-
-USERS = USERS
-ADMINS = ADMINS
+from .main import ADMINS, USERS, HOST, PORT

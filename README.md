@@ -14,3 +14,6 @@ $ uv sync
 ```bash
 $ python -m app
 ```
+
+- api: `/api`
+- docs: `/docs`

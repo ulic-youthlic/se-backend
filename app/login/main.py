@@ -21,7 +21,7 @@ class Response(BaseModel):
     message: str
 
 
-@router.post("/auth/user")
+@router.post("/user")
 async def auth_user(user: AuthUser) -> Response:
     entry = USERS.get(user.username)
     if entry is not None and entry["password"] == user.password:
@@ -30,7 +30,7 @@ async def auth_user(user: AuthUser) -> Response:
         return Response(code=400, message="Can not find the user.")
 
 
-@router.post("/auth/admin")
+@router.post("/admin")
 async def auth_admin(user: AuthUser) -> Response:
     entry = ADMINS.get(user.username)
     if entry is not None and entry["password"] == user.password:

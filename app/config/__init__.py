@@ -1,0 +1,4 @@
+from .main import ADMINS, USERS
+
+USERS = USERS
+ADMINS = ADMINS

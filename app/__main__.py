@@ -1,8 +1,7 @@
 import uvicorn
 from fastapi import APIRouter, FastAPI
 
-import autoaim
-import login
+from . import autoaim, login
 
 api_router = APIRouter()
 api_router.include_router(login.router, prefix="/login")
@@ -13,7 +12,7 @@ app.include_router(api_router)
 
 
 def main():
-    uvicorn.run("main:app", port=5000, log_level="info")
+    uvicorn.run("__main__:app", port=5000, log_level="info")
 
 
 if __name__ == "__main__":

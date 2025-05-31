@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Path
 from pydantic import BaseModel
 
-from ..config import ADMINS, USERS
+from app.config import ADMINS, USERS
 
 router = APIRouter(tags=["login"])
 

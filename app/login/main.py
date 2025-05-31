@@ -1,6 +1,4 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Path
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.config import ADMINS, USERS
@@ -18,17 +16,19 @@ class AuthUser(BaseModel):
     password: str
 
 
-@router.post("/auth/{type}")
-async def auth(user: AuthUser, type: Annotated[str, Path(pattern="^user|admin$")]):
-    if type == "user":
-        entry = USERS.get(user.username)
-        if entry is not None and entry["password"] == user.password:
-            return {"code": 200, "message": "Login successful."}
-        else:
-            return {"code": 400, "message": "Can not find the user."}
+@router.post("/auth/user")
+async def auth_user(user: AuthUser):
+    entry = USERS.get(user.username)
+    if entry is not None and entry["password"] == user.password:
+        return {"code": 200, "message": "Login successful."}
     else:
-        entry = ADMINS.get(user.username)
-        if entry is not None and entry["password"] == user.password:
-            return {"code": 200, "message": "Login successful."}
-        else:
-            return {"code": 400, "message": "Can not find the user."}
+        return {"code": 400, "message": "Can not find the user."}
+
+
+@router.post("/auth/admin")
+async def auth_admin(user: AuthUser):
+    entry = ADMINS.get(user.username)
+    if entry is not None and entry["password"] == user.password:
+        return {"code": 200, "message": "Login successful."}
+    else:
+        return {"code": 400, "message": "Can not find the user."}

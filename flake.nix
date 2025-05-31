@@ -28,6 +28,7 @@
           (with pkgs; [
             ruff
             pyright
+            ty
 
             uv
             defaultPython

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.config import ADMINS, USERS
+from app.state import UserContext, admin_contexts, user_contexts
 
 router = APIRouter(tags=["login"])
 
@@ -25,6 +26,7 @@ class Response(BaseModel):
 async def auth_user(user: AuthUser) -> Response:
     entry = USERS.get(user.username)
     if entry is not None and entry["password"] == user.password:
+        user_contexts.update({user.username: UserContext(user.username)})
         return Response(code=200, message="Login successful.")
     else:
         return Response(code=400, message="Can not find the user.")
@@ -34,6 +36,7 @@ async def auth_user(user: AuthUser) -> Response:
 async def auth_admin(user: AuthUser) -> Response:
     entry = ADMINS.get(user.username)
     if entry is not None and entry["password"] == user.password:
+        admin_contexts.update({user.username: UserContext(user.username)})
         return Response(code=200, message="Login successful.")
     else:
         return Response(code=400, message="Can not find the user.")

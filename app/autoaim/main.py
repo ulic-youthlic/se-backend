@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app import core
+from app.state import user_contexts, admin_contexts
 
 router = APIRouter(tags=["autoaim"])
 
@@ -24,31 +25,27 @@ class Response(BaseModel):
     success: bool
 
 
-process = None
-
-
 @router.post("/set")
 async def set(status: Status) -> Response:
-    global process
+    context = user_contexts.get(status.username)
+    if context is None:
+        return Response(success=False)
     if status.enabled:
-        if process is None:
-            process = core.launch()
+        if context.process is None:
+            context.process = core.launch()
     else:
-        if process is not None:
-            core.teminate(process=process)
-            process = None
+        if context.process is not None:
+            core.teminate(process=context.process)
+            context.process = None
     return Response(success=True)
 
 
 @router.get("/status")
-# [TODO]: impl get_status func
 async def status(username: str) -> Status:
-    return Status(
-        username=username,
-        enabled=True,
-        sensitiveity=0,
-        lockStrength=0,
-        headshotPriority=True,
-        autoFile=True,
-        targetTraking=True,
-    )
+    context = user_contexts.get(username)
+    if context is None:
+        return Status(username=username, enabled=False)
+    if context.process is not None and context.process.is_alive():
+        return Status(username=username, enabled=True)
+    else:
+        return Status(username=username, enabled=False)

@@ -28,13 +28,15 @@
           (with pkgs; [
             ruff
             pyright
-            ty
 
             uv
             defaultPython
           ])
           ++ (with pkgs.python3Packages; [
-            ]);
+            torchWithCuda
+            opencv-python
+            ultralytics
+          ]);
         shellHook = ''
           uv sync
           . ./.venv/bin/activate

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from app import core
 
 router = APIRouter(tags=["autoaim"])
 
@@ -12,20 +13,30 @@ async def hi(name: str = "autoaim") -> str:
 class Status(BaseModel):
     username: str
     enabled: bool
-    sensitiveity: int
-    lockStrength: int
-    headshotPriority: bool
-    autoFile: bool
-    targetTraking: bool
+    sensitiveity: int | None = None
+    lockStrength: int | None = None
+    headshotPriority: bool | None = None
+    autoFile: bool | None = None
+    targetTraking: bool | None = None
 
 
 class Response(BaseModel):
     success: bool
 
 
+process = None
+
+
 @router.post("/set")
-# [TODO]: impl func for setting autoaim status
 async def set(status: Status) -> Response:
+    global process
+    if status.enabled:
+        if process is None:
+            process = core.launch()
+    else:
+        if process is not None:
+            core.teminate(process=process)
+            process = None
     return Response(success=True)
 
 

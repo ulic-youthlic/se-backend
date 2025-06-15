@@ -2,13 +2,14 @@ import uvicorn
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import autoaim, login, game_data
+from . import autoaim, login, game_data, history
 from .config import HOST, PORT
 
 api_router = APIRouter()
 api_router.include_router(login.router, prefix="/login")
 api_router.include_router(autoaim.router, prefix="/autoaim")
 api_router.include_router(game_data.router, prefix="/game-data")
+api_router.include_router(history.router, prefix="/history")
 
 origins = ["*"]
 

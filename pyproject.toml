@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.12",
+    "mss>=10.0.0",
+    "opencv-python>=4.11.0.86",
     "software-engineering-lab>=0.1.0",
     "uvicorn[standard]>=0.34.2",
 ]

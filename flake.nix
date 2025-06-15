@@ -36,6 +36,8 @@
             torchWithCuda
             opencv-python
             ultralytics
+            opencv-python
+            mss
           ]);
         shellHook = ''
           uv sync

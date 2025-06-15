@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import login, game_data, history, gamesupport
+from . import login, game_data, history, gamesupport, game
 from .config import HOST, PORT
 
 api_router = APIRouter()
@@ -10,6 +10,7 @@ api_router.include_router(login.router, prefix="/login")
 api_router.include_router(gamesupport.router, prefix="/gamesupport")
 api_router.include_router(game_data.router, prefix="/game-data")
 api_router.include_router(history.router, prefix="/history")
+api_router.include_router(game.router, prefix="/game")
 
 origins = ["*"]
 

@@ -21,7 +21,6 @@ class ToggleResponse(BaseModel):
 
 
 class AutoaimStatus(BaseModel):
-    username: str
     enable: bool
 
 
@@ -46,6 +45,6 @@ async def toggle(request: ToggleRequest):
         return ToggleResponse(success=True)
 
 
-@router.get("/status/{username}")
-async def status(username: str):
-    return AutoaimStatus(username=username, enable=enable)
+@router.get("/status")
+async def status():
+    return AutoaimStatus(enable=enable)

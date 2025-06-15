@@ -49,6 +49,5 @@ def parse_line(line: str):
 
 def meta():
     with open(LOG_FILE, "r") as f:
-        line = f.readlines()[-1]
-        info = parse_line(line)
-    return info
+        lines = f.readlines()
+    return [parse_line(line) for line in lines]

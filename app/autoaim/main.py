@@ -30,20 +30,23 @@ process = None
 
 @router.post("/toggle", response_model=ToggleResponse)
 async def toggle(request: ToggleRequest):
+    # core.launch()
     global enable
     global process
-    if request.enable != enable:
-        if not enable:
+    if request.enable:
+        if enable:
+            return ToggleResponse(success=False)
+        else:
             process = core.launch()
             enable = True
-        elif process is not None:
+            return ToggleResponse(success=True)
+    else:
+        if enable:
             core.teminate(process=process)
+            enable = False
+            return ToggleResponse(success=True)
         else:
             return ToggleResponse(success=False)
-        return ToggleResponse(success=True)
-    else:
-        return ToggleResponse(success=True)
-
 
 @router.get("/status")
 async def status():

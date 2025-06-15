@@ -60,11 +60,8 @@ class UserCreate(AuthUser):
     is_admin: bool = False
 
 
-class UserBase(BaseModel):
+class UserInDB(BaseModel):
     username: str
-
-
-class UserInDB(UserBase):
     password: str
     is_admin: bool
 
@@ -73,6 +70,11 @@ class UserInDB(UserBase):
 
 
 class AuthResponse(BaseModel):
+    code: int
+    message: str
+
+
+class RegisterResponde(BaseModel):
     code: int
     message: str
 
@@ -98,7 +100,7 @@ def authenticate_user(user_creds: AuthUser) -> UserInDB:
     return user
 
 
-@router.post("/register", response_model=UserBase)
+@router.post("/register", response_model=RegisterResponde)
 def regiter_user(user: UserCreate):
     db_user = get_user(username=user.username)
     if db_user:
@@ -109,7 +111,7 @@ def regiter_user(user: UserCreate):
             (user.username, user.password, user.is_admin),
         )
         conn.commit()
-    return UserBase(username=user.username)
+    return RegisterResponde(code=200, message="User register successfully.")
 
 
 @router.post("/login", response_model=AuthResponse)

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app import core
+from app.game import context
 
 router = APIRouter(tags=["gamesupport"])
 
@@ -33,7 +34,7 @@ async def toggle(request: ToggleRequest):
     global enable
     global process
     if request.enable:
-        if enable:
+        if enable or context.running:
             return ToggleResponse(success=False)
         else:
             process = core.launch()

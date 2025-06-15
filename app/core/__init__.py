@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app.config import LOG_FILE
 
-from half_life2_agent.test_development.path_planning_based_on_vision.main_for_test import (
+from half_life2_agent.test_development.path_planning_based_on_vision.main_for_test_slam_with_decision_tree_and_nn import (
     GameBot,
 )
 

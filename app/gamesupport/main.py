@@ -3,11 +3,11 @@ from pydantic import BaseModel
 
 from app import core
 
-router = APIRouter(tags=["autoaim"])
+router = APIRouter(tags=["gamesupport"])
 
 
 @router.get("/hi")
-async def hi(name: str = "autoaim") -> str:
+async def hi(name: str = "gamesupport") -> str:
     return f"hi, {name}"
 
 
@@ -20,7 +20,7 @@ class ToggleResponse(BaseModel):
     success: bool
 
 
-class AutoaimStatus(BaseModel):
+class GameSupportStatus(BaseModel):
     enable: bool
 
 
@@ -30,7 +30,6 @@ process = None
 
 @router.post("/toggle", response_model=ToggleResponse)
 async def toggle(request: ToggleRequest):
-    # core.launch()
     global enable
     global process
     if request.enable:
@@ -42,12 +41,15 @@ async def toggle(request: ToggleRequest):
             return ToggleResponse(success=True)
     else:
         if enable:
-            core.teminate(process=process)
+            if process is not None:
+                core.teminate(process)
+                process = None
             enable = False
             return ToggleResponse(success=True)
         else:
             return ToggleResponse(success=False)
 
+
 @router.get("/status")
 async def status():
-    return AutoaimStatus(enable=enable)
+    return GameSupportStatus(enable=enable)

@@ -13,7 +13,7 @@ api_router.include_router(history.router, prefix="/history")
 
 origins = ["*"]
 
-app = FastAPI()
+app = FastAPI(lifespan=login.lifespan)
 app.include_router(api_router, prefix="/api")
 app.add_middleware(
     CORSMiddleware,

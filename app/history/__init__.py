@@ -261,7 +261,7 @@ async def get_video(rid: int, download: bool = False):
 
 
 @router.post("/record/{rid}")
-async def delete_record_endpoint(rid: int, request: DeleteRecordRequest):
+async def delete_record(rid: int, request: DeleteRecordRequest):
     if not request.delete:
         return JSONResponse(
             status_code=400,
@@ -281,9 +281,7 @@ async def delete_record_endpoint(rid: int, request: DeleteRecordRequest):
 
 
 @router.post("/record/{rid}/update", response_model=RecordMetadata)
-async def update_record_metadata_endpoint(
-    rid: int, request: UpdateRecordRequest = Body(...)
-):
+async def update_record_metadata(rid: int, request: UpdateRecordRequest = Body(...)):
     update_data = request.model_dump(exclude_unset=True)
 
     if not update_data:

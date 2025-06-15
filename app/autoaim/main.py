@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+
 from app import core
-from app.state import user_contexts, admin_contexts
 
 router = APIRouter(tags=["autoaim"])
 
@@ -11,41 +11,41 @@ async def hi(name: str = "autoaim") -> str:
     return f"hi, {name}"
 
 
-class Status(BaseModel):
+class ToggleRequest(BaseModel):
     username: str
-    enabled: bool
-    sensitiveity: int | None = None
-    lockStrength: int | None = None
-    headshotPriority: bool | None = None
-    autoFile: bool | None = None
-    targetTraking: bool | None = None
+    enable: bool
 
 
-class Response(BaseModel):
+class ToggleResponse(BaseModel):
     success: bool
 
 
-@router.post("/set")
-async def set(status: Status) -> Response:
-    context = user_contexts.get(status.username)
-    if context is None:
-        return Response(success=False)
-    if status.enabled:
-        if context.process is None:
-            context.process = core.launch()
+class AutoaimStatus(BaseModel):
+    username: str
+    enable: bool
+
+
+enable = False
+process = None
+
+
+@router.post("/toggle", response_model=ToggleResponse)
+async def toggle(request: ToggleRequest):
+    global enable
+    global process
+    if request.enable != enable:
+        if not enable:
+            process = core.launch()
+            enable = True
+        elif process is not None:
+            core.teminate(process=process)
+        else:
+            return ToggleResponse(success=False)
+        return ToggleResponse(success=True)
     else:
-        if context.process is not None:
-            core.teminate(process=context.process)
-            context.process = None
-    return Response(success=True)
+        return ToggleResponse(success=True)
 
 
 @router.get("/status")
-async def status(username: str) -> Status:
-    context = user_contexts.get(username)
-    if context is None:
-        return Status(username=username, enabled=False)
-    if context.process is not None and context.process.is_alive():
-        return Status(username=username, enabled=True)
-    else:
-        return Status(username=username, enabled=False)
+async def status(username: str):
+    return AutoaimStatus(username=username, enable=enable)

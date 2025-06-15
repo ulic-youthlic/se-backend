@@ -1,8 +1,46 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 
-from app.config import ADMINS, USERS
-from app.state import UserContext, admin_contexts, user_contexts
+import sqlite3
+
+
+DATABASE_URL = "user.db"
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE_URL)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def create_user_table():
+    with get_db_connection() as conn:
+        conn.execute("""
+                         CREATE TABLE IF NOT EXISTS users (
+                             username TEXT NOT NULL PRIMARY KEY,
+                             password TEXT NOT NULL,
+                             is_admin BOOLEAN NOT NULL DEFAULT 0
+                         );
+                     """)
+        conn.commit()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = ?", ("admin",))
+        if cursor.fetchone() is None:
+            password = "111111"
+            cursor.execute(
+                "INSERT INTO users (username, password, is_admin) VALUES (?, ?, ?)",
+                ("admin", password, True),
+            )
+            conn.commit()
+            print(f"Default admin user 'admin' with password '{password}' created.")
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    create_user_table()
+    yield
+
 
 router = APIRouter(tags=["login"])
 
@@ -15,28 +53,66 @@ async def hi(name: str = "login") -> str:
 class AuthUser(BaseModel):
     username: str
     password: str
+    is_admin: bool = False
 
 
-class Response(BaseModel):
+class UserCreate(AuthUser):
+    is_admin: bool = False
+
+
+class UserBase(BaseModel):
+    username: str
+
+
+class UserInDB(UserBase):
+    password: str
+    is_admin: bool
+
+    class Config:
+        from_attributes = True
+
+
+class AuthResponse(BaseModel):
     code: int
     message: str
 
 
-@router.post("/user")
-async def auth_user(user: AuthUser) -> Response:
-    entry = USERS.get(user.username)
-    if entry is not None and entry["password"] == user.password:
-        user_contexts.update({user.username: UserContext(user.username)})
-        return Response(code=200, message="Login successful.")
-    else:
-        return Response(code=400, message="Can not find the user.")
+def get_user(username: str) -> UserInDB | None:
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        user_row = cursor.fetchone()
+        if user_row:
+            return UserInDB(**dict(user_row))
+        return None
 
 
-@router.post("/admin")
-async def auth_admin(user: AuthUser) -> Response:
-    entry = ADMINS.get(user.username)
-    if entry is not None and entry["password"] == user.password:
-        admin_contexts.update({user.username: UserContext(user.username)})
-        return Response(code=200, message="Login successful.")
-    else:
-        return Response(code=400, message="Can not find the user.")
+def authenticate_user(user_creds: AuthUser) -> UserInDB:
+    user = get_user(username=user_creds.username)
+    if (
+        not user
+        or user.is_admin != user_creds.is_admin
+        or user.password != user_creds.password
+    ):
+        raise HTTPException(status_code=401, detail="Incorrect username or password.")
+    return user
+
+
+@router.post("/register", response_model=UserBase)
+def regiter_user(user: UserCreate):
+    db_user = get_user(username=user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered.")
+    with get_db_connection() as conn:
+        conn.execute(
+            "INSERT INTO users (username, password, is_admin) VALUES (?, ?, ?)",
+            (user.username, user.password, user.is_admin),
+        )
+        conn.commit()
+    return UserBase(username=user.username)
+
+
+@router.post("/login", response_model=AuthResponse)
+async def login(user_creds: AuthUser):
+    user = authenticate_user(user_creds)
+    return AuthResponse(code=200, message=f"Login successful for user {user.username}.")

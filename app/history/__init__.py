@@ -160,7 +160,7 @@ class StorageManager(object):
         records = self._read_metadata()
         if not records:
             return 1
-        return max(record["rid"] for record in records)
+        return max(record["rid"] + 1 for record in records)
 
     def add_record(self, record_data: dict):
         all_records = self._read_metadata()

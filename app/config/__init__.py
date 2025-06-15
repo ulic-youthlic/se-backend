@@ -1,1 +1,1 @@
-from .main import ADMINS, HOST, LOG_FILE, PORT, USERS
+from .main import HOST, LOG_FILE, PORT

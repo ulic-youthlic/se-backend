@@ -6,7 +6,9 @@
 # Configuration
 
 ```bash
+$ uv venv
 $ uv sync
+$ . ./.venv/bin/activate
 ```
 
 # Run

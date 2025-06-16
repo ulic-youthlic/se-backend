@@ -34,7 +34,7 @@ async def toggle(request: ToggleRequest):
     global enable
     global process
     if request.enable:
-        if enable or context.running:
+        if enable or not context.running:
             return ToggleResponse(success=False)
         else:
             process = core.launch()

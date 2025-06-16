@@ -1,9 +1,13 @@
 import platform
 import subprocess
 import sys
+import threading
 
+import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+
+from app.config import PORT
 
 router = APIRouter(tags=["game"])
 
@@ -26,12 +30,25 @@ class GameStatus(BaseModel):
 
 
 class GameContext(object):
-    def __init__(self, process=None) -> None:
+    def __init__(self, process: subprocess.Popen | None = None) -> None:
         self.process = process
 
     @property
     def running(self) -> bool:
         return self.process is not None and self.process.poll() is None
+
+    def watch_process(self):
+        if self.process is not None:
+            self.process.wait()
+            try:
+                requests.post(
+                    f"http://127.0.0.1:{PORT}/api/gamesupport/toggle",
+                    json={"enable": False},
+                )
+            except requests.exceptions.RequestException:
+                pass
+        if self.process is not None:
+            self.process = None
 
 
 context = GameContext()
@@ -50,11 +67,15 @@ async def toggle(request: ToggleRequest):
 
         try:
             context.process = subprocess.Popen(command)
+            watcher = threading.Thread(
+                target=lambda: context.watch_process(), args=(), daemon=True
+            )
+            watcher.start()
             return ToggleResponse(success=True)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to start process: {e}")
     else:
-        if not context.running:
+        if not context.running or context.process is None:
             raise HTTPException(status_code=400, detail="Process is not running.")
         pid = context.process.pid
         try:

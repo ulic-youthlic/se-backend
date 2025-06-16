@@ -13,7 +13,7 @@ async def hi(name: str = "gamesupport") -> str:
 
 
 class ToggleRequest(BaseModel):
-    username: str
+    username: str = "admin"
     enable: bool
 
 

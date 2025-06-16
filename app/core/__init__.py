@@ -1,12 +1,13 @@
 import multiprocessing
+import os
 import re
 from datetime import datetime
-
-from app.config import LOG_FILE
 
 from half_life2_agent.test_development.path_planning_based_on_vision.main_for_test_slam_with_decision_tree_and_nn import (
     GameBot,
 )
+
+from app.config import LOG_FILE
 
 
 def start():
@@ -47,7 +48,7 @@ def parse_line(line: str):
     }
 
 
-def meta():
-    with open(LOG_FILE, "r") as f:
+def meta(username: str):
+    with open(os.path.join(username, LOG_FILE), "r") as f:
         lines = f.readlines()
     return [parse_line(line) for line in lines]

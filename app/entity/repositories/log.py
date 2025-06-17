@@ -15,8 +15,6 @@ class LogReposity(object):
         except FileNotFoundError:
             self.log = []
 
-
-
     @staticmethod
     def _parse_line(line: str) -> LogEntry:
         pattern = r"\[(.*?)\]\s+Score:\s+(\d+),\s+Time:\s+([\d:]+),\s+Kills:\s+(\d+),\s+Cubes:\s+(\d+)"

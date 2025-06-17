@@ -12,6 +12,7 @@ def start():
     bot = GameBot()
     bot.run()
 
+
 class GameManager(object):
     def __init__(self):
         self._game_process = None
@@ -65,7 +66,6 @@ class GameManager(object):
             self._game_process = None
 
     def _start_support(self):
-
         process = multiprocessing.Process(target=start)
         process.start()
         self._support_process = process

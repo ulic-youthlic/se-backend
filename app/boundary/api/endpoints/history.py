@@ -60,7 +60,7 @@ async def all_records_info(
 async def video(
     rid: int,
     controller: Annotated[Recorder, Depends(get_recorder_controller)],
-    download: HistoryVideoRequest=HistoryVideoRequest(True),
+    download: HistoryVideoRequest = HistoryVideoRequest(True),
 ):
     record_meta = controller.video_repo.get_record_by_rid(rid)
     if not record_meta:

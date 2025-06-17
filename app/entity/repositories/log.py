@@ -8,10 +8,14 @@ LOG_FILE = "log.txt"
 
 class LogReposity(object):
     def __init__(self, username: str):
-        with open(os.path.join(username, LOG_FILE), "r") as f:
-            lines = f.readlines()
+        try:
+            with open(os.path.join("log", username, LOG_FILE), "r") as f:
+                lines = f.readlines()
+            self.log = list(map(self._parse_line, lines))
+        except FileNotFoundError:
+            self.log = []
 
-        self.log = list(map(self._parse_line, lines))
+
 
     @staticmethod
     def _parse_line(line: str) -> LogEntry:

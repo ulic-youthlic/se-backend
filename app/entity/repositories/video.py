@@ -7,11 +7,20 @@ from ..models.video_mata import VideoMetaModel
 class VideoRepository(object):
     def __init__(self, directory: str, metadata_file: str) -> None:
         self.directory = directory
-        self.metadata_file = os.path.join(self.directory, metadata_file)
+        self.metadata_filename = metadata_file
+        self.username = "admin"
+        self._setup()
+
+    @property
+    def metadata_file(self):
+        return os.path.join(self.directory, self.username, self.metadata_filename)
+
+    def set_username(self, username):
+        self.username = username
         self._setup()
 
     def _setup(self):
-        os.makedirs(self.directory, exist_ok=True)
+        os.makedirs(os.path.join(self.directory, self.username), exist_ok=True)
         if not os.path.exists(self.metadata_file):
             with open(self.metadata_file, "w") as f:
                 json.dump([], f)
@@ -89,4 +98,4 @@ class VideoRepository(object):
         return True
 
     def get_video_path(self, rid: int) -> str:
-        return os.path.join(self.directory, f"record_{rid}.mp4")
+        return os.path.join(self.directory, self.username, f"record_{rid}.mp4")

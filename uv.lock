@@ -4069,7 +4069,7 @@ wheels = [
 [[package]]
 name = "software-engineering-lab"
 version = "0.1.0"
-source = { git = "https://github.com/ulic-youthlic/Software_Engineering_Lab?branch=dev#8ead90eb948b9c99bcc9ebeab834c614d792b368" }
+source = { git = "https://github.com/ulic-youthlic/Software_Engineering_Lab?branch=dev#42ec57bca6ddfdb6e65e9b9ad252bc5c2e3db242" }
 dependencies = [
     { name = "keyboard" },
     { name = "lap" },

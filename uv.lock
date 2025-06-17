@@ -4069,7 +4069,7 @@ wheels = [
 [[package]]
 name = "software-engineering-lab"
 version = "0.1.0"
-source = { git = "https://github.com/ulic-youthlic/Software_Engineering_Lab?branch=dev#6ea4ea20e0e2a4d70a43a6b92e3a208309a01151" }
+source = { git = "https://github.com/ulic-youthlic/Software_Engineering_Lab?branch=dev#8ead90eb948b9c99bcc9ebeab834c614d792b368" }
 dependencies = [
     { name = "keyboard" },
     { name = "lap" },
@@ -4263,7 +4263,7 @@ wheels = [
 
 [[package]]
 name = "ultralytics"
-version = "8.3.155"
+version = "8.3.156"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
@@ -4281,9 +4281,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "ultralytics-thop" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/79/60/3c97f37ae21dc4e4e4eb565176b7827ac36e28ae766947dd72ea06eb9f32/ultralytics-8.3.155.tar.gz", hash = "sha256:79be12ef1824afb8b392a02c21d00916ceee51474b3b7a77d92896f36c954d2f", size = 892692, upload-time = "2025-06-14T11:18:27.247Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8d/58/83b2febdfdd63b114673d7af4768de465b38bb0424f1b3f170b95e20f50b/ultralytics-8.3.156.tar.gz", hash = "sha256:fdebc9dcbc198b715428af564ca9964bcd352363b59cdd8d9f4adbb3e8c4fec3", size = 892954, upload-time = "2025-06-17T11:09:17.934Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a8/fe/257faf63d2c310b3c9343fca7e1adc63a16c34ff5a097824313460589830/ultralytics-8.3.155-py3-none-any.whl", hash = "sha256:dbf35a19b5ac54adfc327cefc27429e0915896efa6b737bc48d025eb710d6483", size = 1039720, upload-time = "2025-06-14T11:18:24.67Z" },
+    { url = "https://files.pythonhosted.org/packages/93/46/bcc8b82d5bd5211ace7eec1a9f190f3b8f6322c44da2685720ef24220945/ultralytics-8.3.156-py3-none-any.whl", hash = "sha256:1349189dbf3c5f259b36b6f876991b75a416c997f699953aeedef2a833030259", size = 1040038, upload-time = "2025-06-17T11:09:15.586Z" },
 ]
 
 [[package]]

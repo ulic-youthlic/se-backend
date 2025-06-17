@@ -36,10 +36,10 @@ async def recording_status(
 
 @router.post("/record", response_model=HistoryToggleRecordResponse)
 async def toggle_record(
-    request: HistoryToggleRecordRequest,
+    enable: HistoryToggleRecordRequest,
     controller: Annotated[Recorder, Depends(get_recorder_controller)],
 ):
-    if not controller.set(new_status=request.enable):
+    if not controller.set(new_status=enable.enable):
         raise HTTPException(status_code=400, detail="Set recording status failed.")
     return HistoryToggleRecordResponse(message="Change recording status successfully.")
 
@@ -59,8 +59,8 @@ async def all_records_info(
 @router.get("/record/{rid}")
 async def video(
     rid: int,
-    request: HistoryVideoRequest,
     controller: Annotated[Recorder, Depends(get_recorder_controller)],
+    download: HistoryVideoRequest=HistoryVideoRequest(True),
 ):
     record_meta = controller.video_repo.get_record_by_rid(rid)
     if not record_meta:
@@ -70,9 +70,9 @@ async def video(
         raise HTTPException(
             status_code=404, detail=f"Video file for record ID {rid} not found on disk."
         )
-    media_type = "application/octet-stream" if request.root else "video/mp4"
+    media_type = "application/octet-stream" if download.root else "video/mp4"
     headers = {}
-    if request.root:
+    if download.root:
         headers["Content-Disposition"] = f'attachment; filename="record_{rid}.mp4"'
     return FileResponse(path=video_path, media_type=media_type, headers=headers)
 

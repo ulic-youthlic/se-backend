@@ -8,14 +8,22 @@ from half_life2_agent.test_development.path_planning_based_on_vision.main_for_te
 )
 
 
+def start():
+    bot = GameBot()
+    bot.run()
+
 class GameManager(object):
     def __init__(self):
         self._game_process = None
         self._support_process = None
         self._support_enabled = False
+        self.username = "admin"
+
+    def set_username(self, username):
+        self.username = username
 
     def _start_game(self) -> bool:
-        command = [sys.executable, "game/CG/panda3D3/main.py"]
+        command = [sys.executable, "game/CG/panda3D3/main.py", self.username]
         try:
             self._game_process = subprocess.Popen(command)
             watcher = threading.Thread(
@@ -57,9 +65,6 @@ class GameManager(object):
             self._game_process = None
 
     def _start_support(self):
-        def start():
-            bot = GameBot()
-            bot.run()
 
         process = multiprocessing.Process(target=start)
         process.start()
